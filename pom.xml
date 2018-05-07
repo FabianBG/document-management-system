@@ -151,8 +151,8 @@
       <groupId>com.sun.mail</groupId>
       <artifactId>javax.mail</artifactId>
       <version>1.5.2</version>
-      <scope>provided</scope>
     </dependency>
+
 
     <!-- Logback -->
     <dependency>

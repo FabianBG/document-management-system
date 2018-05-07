@@ -186,7 +186,8 @@ public class ImageUtils {
 			HashMap<String, Object> hm = new HashMap<String, Object>();
 			hm.put("fileIn", input);
 			hm.put("fileOut", output);
-			String tpl = Config.SYSTEM_IMAGEMAGICK_CONVERT + " " + params;
+			String cmdConvert = Config.SYSTEM_IMAGEMAGICK_CONVERT.isEmpty() ? "convert":Config.SYSTEM_IMAGEMAGICK_CONVERT;
+			String tpl = cmdConvert + " " + params;
 			cmd = TemplateUtils.replace("IMAGE_CONVERT", tpl, hm);
 			ExecutionResult er = ExecutionUtils.runCmd(cmd);
 

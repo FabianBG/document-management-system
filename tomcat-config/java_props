@@ -1,0 +1,1 @@
+JAVA_OPTS=-Dokm.db.jdbc=jdbc:postgresql://10.20.8.66:5432/openkm -Dokm.db.dirver=org.postgresql.Driver -Dokm.db.user=postgres -Dokm.db.password=****

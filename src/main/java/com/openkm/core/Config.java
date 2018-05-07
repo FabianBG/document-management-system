@@ -507,7 +507,7 @@ public class Config {
 	public static int SYSTEM_OPENOFFICE_PORT;
 	public static String SYSTEM_OPENOFFICE_SERVER = "";
 	public static String SYSTEM_OPENOFFICE_DICTIONARY = "";
-	public static String SYSTEM_IMAGEMAGICK_CONVERT = "";
+	public static String SYSTEM_IMAGEMAGICK_CONVERT = "convert";
 	public static String SYSTEM_SWFTOOLS_PDF2SWF = "";
 	public static String SYSTEM_GHOSTSCRIPT = "";
 	public static String SYSTEM_DWG2DXF = "";

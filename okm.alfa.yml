@@ -1,0 +1,106 @@
+#Deployment
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: okm
+  name: okm
+  namespace: alfa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: okm
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: okm
+    spec:
+      volumes:
+      - name: nfs-vol
+        persistentVolumeClaim:
+          claimName: nfs-claim
+      containers:
+      - image: 172.18.0.2/yachay/okm:6.7.1
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: nfs-vol
+          mountPath: /okmRepo
+        env:
+        - name: JAVA_OPTS
+          value: -Dokm.db.jdbc=jdbc:postgresql://172.18.0.12:5432/alfa_openkm -Dokm.db.dirver=org.postgresql.Driver -Dokm.db.user=postgres -Dokm.db.password=R}nC8Nh]auCV
+        livenessProbe:
+          failureThreshold: 5
+          initialDelaySeconds: 30
+          httpGet:
+            path: /OpenKM
+            port: 8080
+            scheme: HTTP
+        readinessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          httpGet:
+            path: /OpenKM
+            port: 8080
+            scheme: HTTP
+        name: okm
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+          requests:
+            memory: 800Mi
+      imagePullSecrets:
+      - name: yachay-harbor
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: okm
+  name: okm
+  namespace: alfa
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+  - nodePort:
+    port: 8080
+    protocol: TCP
+  selector:
+    app: okm
+  sessionAffinity: ClientIP
+  type: NodePort
+
+---
+#Ingress controller
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/session-cookie-hash: md5
+    kubernetes.io/ingress.class: nginx
+  name: okm
+  namespace: alfa
+spec:
+  rules:
+  - host: alfa-okm.yachay.gob.ec
+    http:
+      paths:
+      - backend:
+          serviceName: okm
+          servicePort: 8080
+        path: /
